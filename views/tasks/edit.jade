@@ -1,6 +1,6 @@
 h1 Edit task view
 
-form(method='post',action='/tasks/'+task.id)
+form(method='post',action='/tasks/'+task.id+'?_method=put')
     fieldset
         legend Editing task
         div.clearfix

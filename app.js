@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var methodOverride=require('method-override');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -24,6 +25,7 @@ var Task=mongoose.model('Task',Task);
 
 var app = express();
 
+app.use(methodOverride('_method'));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -38,7 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-//mongodb router
+//显示任务-路由
 app.get('/tasks',function(req,res){
   Task.find({},function(err,docs){
     res.render('tasks/index',{
@@ -48,13 +50,12 @@ app.get('/tasks',function(req,res){
   });
 });
 
-//输入任务
+//添加任务-路由
 app.get('/tasks/new',function(req,res){
   res.render('tasks/new.jade',{
     title:'New Task'
   });
 });
-//提交保存
 app.post('/tasks',function(req,res){
   var task=new Task(req.body.task);
   console.log(req.body.task);
@@ -67,7 +68,7 @@ app.post('/tasks',function(req,res){
   });
 });
 
-//编辑已有任务
+//修改任务-路由
 app.get('/tasks/:id/edit',function(req,res){
   Task.findById(req.params.id,function(err,doc){
     res.render('tasks/edit',{
@@ -76,7 +77,7 @@ app.get('/tasks/:id/edit',function(req,res){
     });
   });
 });
-app.post('/tasks/:id',function(req,res){
+app.put('/tasks/:id',function(req,res){
   Task.findById(req.params.id,function(err,doc){
     doc.task=req.body.task.task;
     doc.save(function(err){
@@ -85,6 +86,16 @@ app.post('/tasks/:id',function(req,res){
       }else{
         console.log('修改任务失败！');
       }
+    });
+  });
+});
+
+//删除任务-路由
+app.delete('/tasks/:id',function(req,res){
+  Task.findById(req.params.id,function(err,doc){
+    if (!doc) return next(new NotFound('Document not found'));
+    doc.remove(function(){
+      res.redirect('/tasks');
     });
   });
 });
