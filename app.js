@@ -19,7 +19,7 @@ var Schema=mongoose.Schema;
 var ObjectId=Schema.ObjectId;
 var Task=new Schema({
   task:String
-});
+},{versionKey:false});
 var Task=mongoose.model('Task',Task);
 
 var app = express();
@@ -54,6 +54,7 @@ app.get('/tasks/new',function(req,res){
     title:'New Task'
   });
 });
+//提交保存
 app.post('/tasks',function(req,res){
   var task=new Task(req.body.task);
   console.log(req.body.task);
@@ -63,6 +64,28 @@ app.post('/tasks',function(req,res){
     }else{
       res.redirect('/tasks/new');
     }
+  });
+});
+
+//编辑已有任务
+app.get('/tasks/:id/edit',function(req,res){
+  Task.findById(req.params.id,function(err,doc){
+    res.render('tasks/edit',{
+      title:'Edit Task View',
+      task:doc
+    });
+  });
+});
+app.post('/tasks/:id',function(req,res){
+  Task.findById(req.params.id,function(err,doc){
+    doc.task=req.body.task.task;
+    doc.save(function(err){
+      if(!err){
+        res.redirect('/tasks');
+      }else{
+        console.log('修改任务失败！');
+      }
+    });
   });
 });
 

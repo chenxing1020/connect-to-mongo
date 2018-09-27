@@ -7,6 +7,8 @@ h1 Your Tasks
                 each task in docs
                     tr
                         td #{task.task}
+                        td
+                            a.btn(href="/tasks/#{task.id}/edit") Edit
 -else
     p You don't have any tasks!
 p
