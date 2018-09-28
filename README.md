@@ -42,7 +42,34 @@ form(method='post',action='/tasks/'+task.id)
 
 **【问题解决】** 所以又回到了刚开始的问题，需要对表单解析出put和delete方法。继续在网上查找资料。发现还是因为express版本的问题。  
 
-在express3.x版本，用的就是"_method"隐藏字段  
-后台代码：
+在 **express3.x** 版本，用的就是 **"_method"** 隐藏字段  
 
+后端代码：
+```javascript
+app.use(express.methodOverride('_method'));
+app.use(express.static(path.join(_dirname,'public')));
+```
+前端代码：
+```javascript
+form(method='post',action='/tasks/'+task.id)
+  input(name='_method',value='put',type='hidden')
+```
+在 **express4.X** 版本中，express不再内置该方法，需要npm包安装method-override中间件并手动导入，并且在前端的使用方法也发生了变化,不再使用隐藏的input标签，采用 **"?_method=xxx"** 的方式重载http方法。  
+
+后端代码：
+```javascript
+var methodOverride=require('method-override');
+
+app.use(methodOverride('_method'));
+app.use(express.static(path.join(_dirname,'public')));
+```
+前端代码：
+```javascript
+form(method='post',action='/tasks/'+task.id+'?_method=put')
+```
+
+---
+## **flash message的使用**
+
+flash是session中一个用于存储信息的特殊区域，消息写入到flash中，在跳转目标也中
 

@@ -1,5 +1,12 @@
 h1 Your Tasks
 
+- if(warning)
+    div.alert-message.warning
+        p= warning
+- if(info)
+    div(data-alert='alert').alert-message.success
+        p= info
+
 -if (docs.length)
     table
         tr

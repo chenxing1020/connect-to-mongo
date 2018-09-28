@@ -3,7 +3,12 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+
+//http方法重载
 var methodOverride=require('method-override');
+//启用会话
+var Session=require('express-session');
+var flash=require('connect-flash');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -25,7 +30,17 @@ var Task=mongoose.model('Task',Task);
 
 var app = express();
 
+//http方法重载
 app.use(methodOverride('_method'));
+
+//启用会话
+app.use(flash());
+app.use(Session({secret:"zmgxovYAMB160inEocuu",resave:false,saveUninitialized:true}));
+app.use(function(req,res,next){
+  res.locals.warning=req.flash('warning');
+  res.locals.info=req.flash('info');
+  next();
+})
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -58,11 +73,12 @@ app.get('/tasks/new',function(req,res){
 });
 app.post('/tasks',function(req,res){
   var task=new Task(req.body.task);
-  console.log(req.body.task);
   task.save(function(err){
     if(!err){
+      req.flash('info','Task created!');  //闪出消息
       res.redirect('/tasks');
     }else{
+      req.flash('warning',err);
       res.redirect('/tasks/new');
     }
   });
@@ -82,6 +98,7 @@ app.put('/tasks/:id',function(req,res){
     doc.task=req.body.task.task;
     doc.save(function(err){
       if(!err){
+        req.flash('info','edit succeed');
         res.redirect('/tasks');
       }else{
         console.log('修改任务失败！');
@@ -95,6 +112,7 @@ app.delete('/tasks/:id',function(req,res){
   Task.findById(req.params.id,function(err,doc){
     if (!doc) return next(new NotFound('Document not found'));
     doc.remove(function(){
+      req.flash('info','delete completed');
       res.redirect('/tasks');
     });
   });
