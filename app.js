@@ -24,7 +24,8 @@ mongoose.connect('mongodb://localhost/todo_development',{useNewUrlParser:true},f
 var Schema=mongoose.Schema;
 var ObjectId=Schema.ObjectId;
 var Task=new Schema({
-  task:String
+  task:String,
+  detail:String
 },{versionKey:false});
 var Task=mongoose.model('Task',Task);
 
@@ -72,7 +73,11 @@ app.get('/tasks/new',function(req,res){
   });
 });
 app.post('/tasks',function(req,res){
-  var task=new Task(req.body.task);
+  var task=new Task({
+    task:req.body.task,
+    detail:req.body.detail
+  });
+  console.log(req.body;
   task.save(function(err){
     if(!err){
       req.flash('info','Task created!');  //闪出消息
@@ -96,6 +101,7 @@ app.get('/tasks/:id/edit',function(req,res){
 app.put('/tasks/:id',function(req,res){
   Task.findById(req.params.id,function(err,doc){
     doc.task=req.body.task.task;
+    doc.detail=req.body.task.detail;
     doc.save(function(err){
       if(!err){
         req.flash('info','edit succeed');
