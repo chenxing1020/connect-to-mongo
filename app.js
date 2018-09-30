@@ -73,11 +73,8 @@ app.get('/tasks/new',function(req,res){
   });
 });
 app.post('/tasks',function(req,res){
-  var task=new Task({
-    task:req.body.task,
-    detail:req.body.detail
-  });
-  console.log(req.body;
+  console.log(req.body.task);
+  var task=new Task(req.body.task);
   task.save(function(err){
     if(!err){
       req.flash('info','Task created!');  //闪出消息

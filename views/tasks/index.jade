@@ -8,10 +8,12 @@ h1 Your Tasks
         p= info
 
 -if (docs.length)
-    table
+    table(border='1')
         tr
             th Task
-                th
+            th Details
+            th edit
+            th del
                 each task in docs
                     tr
                         td #{task.task}
